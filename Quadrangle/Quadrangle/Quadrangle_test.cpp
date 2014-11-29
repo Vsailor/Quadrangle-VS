@@ -46,13 +46,13 @@ void inputSegment(Segment& s)
 
 void inputRectangle(Rectangle& r)
 {
-	cout << "Enter A and C rectangle points:" << endl;
-	cout << "A: x = ";
-	cin >> r.A.x;
-	cout << "A: y = ";
-	cin >> r.A.y;
 	do
 	{
+		cout << "Enter A and C rectangle points:" << endl;
+		cout << "A: x = ";
+		cin >> r.A.x;
+		cout << "A: y = ";
+		cin >> r.A.y;
 		cout << "C: x = ";
 		cin >> r.C.x;
 		cout << "C : y = ";
@@ -73,18 +73,18 @@ void inputTrapeze(Trapeze& t)
 		cin >> A.x;
 		cout << "Top: A,B: y = ";
 		cin >> A.y;
+		B.y = A.y;
 		cout << "Top: B: x = ";
 		cin >> B.x;
-		B.y = A.y;
 		t.SetTop(A, B);
 		cout << "Enter trapeze bottom:" << endl;
 		cout << "Bottom: C: x = ";
 		cin >> C.x;
 		cout << "Bottom: C,D: y = ";
 		cin >> C.y;
+		D.y = C.y;
 		cout << "Bottom D: x = ";
 		cin >> D.x;
-		D.y = C.y;
 		t.SetBottom(C, D);
 		if (A.y <= C.y)
 		{
@@ -109,10 +109,16 @@ void inputTriangle(Triangle& t)
 	cout << "C: y = ";
 	cin >> t.C.y;
 }
-void inputFromFile(Line& l1, Line& l2, Segment& s1, Segment& s2, Rectangle& r, Trapeze& t, Triangle& tr)
+void inputFromFile()
 {
+	Line l1, l2;
+	Segment s1, s2;
+	Rectangle r;
+	Trapeze t;
+	Triangle tr;
 	ifstream f;
-	f.open("input.txt", ios::out);
+	f.open("Quadrangle_test.txt", ios::out);
+	// для заголовків
 	string s;
 	f >> s;
 	f >> l1.a;
@@ -160,15 +166,24 @@ void inputFromFile(Line& l1, Line& l2, Segment& s1, Segment& s2, Rectangle& r, T
 
 	// out
 
-	/// перетин прямихl1 i l2
+	/// перетин прямих l1 i l2
 	cout << "Intersection ";
 	showLine(l1);
 	cout << " and ";
 	showLine(l2);
 	cout << endl;
-	bool exist = false;
-	showPoint(Intersection(l1, l2, exist));
+	bool exist;
+	Point p = Intersection(l1, l2, exist);
+	if (exist == true)
+	{
+		showPoint(p);
+	}
+	else
+	{
+		cout << "No intersections";
+	}
 	cout << endl;
+
 	/// перетин відрізків s1 i s2
 
 	cout << "Intersection ";
@@ -176,15 +191,25 @@ void inputFromFile(Line& l1, Line& l2, Segment& s1, Segment& s2, Rectangle& r, T
 	cout << " and ";
 	showSegment(s2);
 	cout << endl;
-	showPoint(Intersection(s1, s2,exist));
+	p = Intersection(s1, s2, exist);
+	if (exist == true)
+	{
+		showPoint(p);
+	}
+	else
+	{
+		cout << "No intersections";
+	}
 	cout << endl;
+
 	// перетин відрізку s1 і прямої l1
+
 	cout << "Intersection ";
 	showSegment(s1);
 	cout << " and ";
 	showLine(l1);
 	cout << endl;
-	Point p = Intersection(s1, l1, exist);
+	p = Intersection(s1, l1, exist);
 	if (exist)
 	{
 		showPoint(p);
@@ -193,7 +218,9 @@ void inputFromFile(Line& l1, Line& l2, Segment& s1, Segment& s2, Rectangle& r, T
 	{
 		cout << "No intersections" << endl;
 	}
+
 	// Rectangle
+
 	cout << endl;
 	cout << "Rectangle area = " << Area(r) << endl;
 	cout << "Rectangle perimeter = " << Perimeter(r) << endl;
@@ -201,15 +228,18 @@ void inputFromFile(Line& l1, Line& l2, Segment& s1, Segment& s2, Rectangle& r, T
 	cout << "r = " << radius(r) << endl;
 	cout << "Squares: ";
 	Square(r, l1);
+
 	// Trapeze
-	
+
 	cout << "Trapeze area = " << Area(t) << endl;
 	cout << "Trapeze perimeter = " << Perimeter(t) << endl;
 	cout << "R = " << Radius(t) << endl;
 	cout << "r = " << radius(t) << endl;
 	cout << "Squares: ";
 	Square(t, l1);
+
 	// Triangle
+
 	Angle(tr);
 	cout << "Squares: ";
 	Square(tr, l1);
@@ -243,22 +273,33 @@ void main()
 	Segment s1, s2;
 	Rectangle r;
 	Trapeze t;
+	Point p;
 	Triangle tr;
 	bool exist = false;
 	if (mode == 1)
 	{
 		inputLine(l1);
 		inputLine(l2);
-		
+
 		/// перетин прямихl1 i l2
 		cout << "Intersection ";
 		showLine(l1);
 		cout << " and ";
 		showLine(l2);
 		cout << endl;
-		showPoint(Intersection(l1, l2, exist));
+		p = Intersection(l1, l2, exist);
+		if (exist == true)
+		{
+			showPoint(p);
+		}
+		else
+		{
+			cout << "No intersections";
+		}
 		cout << endl;
+
 		/// перетин відрізків s1 i s2
+
 		inputSegment(s1);
 		inputSegment(s2);
 		cout << "Intersection ";
@@ -266,16 +307,26 @@ void main()
 		cout << " and ";
 		showSegment(s2);
 		cout << endl;
-		showPoint(Intersection(s1, s2, exist));
+		p = Intersection(s1, s2, exist);
+		if (exist == true)
+		{
+			showPoint(p);
+		}
+		else
+		{
+			cout << "No intersections";
+		}
 		cout << endl;
+
 		// перетин відрізку s1 і прямої l1
+
 		cout << "Intersection ";
 		showSegment(s1);
 		cout << " and ";
 		showLine(l1);
 		cout << endl;
 		bool exist = true;
-		Point p = Intersection(s1, l1, exist);
+		p = Intersection(s1, l1, exist);
 		if (exist)
 		{
 			showPoint(p);
@@ -284,8 +335,9 @@ void main()
 		{
 			cout << "No intersections" << endl;
 		}
-		// Rectangle
 		cout << endl;
+
+		// Rectangle
 
 		inputRectangle(r);
 		cout << "Rectangle area = " << Area(r) << endl;
@@ -294,8 +346,9 @@ void main()
 		cout << "r = " << radius(r) << endl;
 		cout << "Squares: ";
 		Square(r, l1);
+
 		// Trapeze
-		
+
 
 		inputTrapeze(t);
 		cout << "Trapeze area = " << Area(t) << endl;
@@ -304,6 +357,7 @@ void main()
 		cout << "r = " << radius(t) << endl;
 		cout << "Squares: ";
 		Square(t, l1);
+
 		// Triangle
 
 		inputTriangle(tr);
@@ -313,7 +367,7 @@ void main()
 	}
 	else if (mode == 2)
 	{
-		inputFromFile(l1, l2, s1, s2, r, t, tr);
+		inputFromFile();
 	}
 	system("pause");
 }

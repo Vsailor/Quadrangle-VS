@@ -22,33 +22,40 @@ bool intersect(Segment a, Segment b, Point& p) {
 	double dy2 = y4 - y3;
 
 	p.x = dy1 * dx2 - dy2 * dx1;
-	if (p.x == 0 || dx2 == 0)
+	// відрізки не перетинаютсья
+	if (p.x == 0)
 		return false;
+	
 	p.y = x3 * y4 - y3 * x4;
 	p.x = ((x1 * y2 - y1 * x2) * dx2 - p.y * dx1) / p.x;
-	p.y = (dy2 * p.x - p.y) / dx2;
+
+	// якщо друга пряма не паралельна осі ОY
+	if (dx2 != 0)
+	{
+		p.y = (dy2 * p.x - p.y) / dx2;
+	}
+	else {
+		p.y = (x3 - x1)*(y2 - y1) / (x2 - x1) + y1;
+	}
+
 	if (
 		((x1 <= p.x && x2 >= p.x) || (x2 <= p.x && x1 >= p.x)) && ((x3 <= p.x && x4 >= p.x) || (x4 <= p.x && x3 >= p.x))
 		) {
 		return true;
 	}
-	return false;
-
+	else return false;
 }
 
 Point Intersection(Segment a, Segment b, bool& exist)
 {
+	exist = true;
 	Point p;
-	p.x = 0;
-	p.y = 0;
 	if (intersect(a, b, p))
 	{
 		return p;
 	}
 	else {
 		cout << "No intersections" << endl;
-		p.x = 0;
-		p.y = 0;
 		exist = false;
 	}
 	return p;
@@ -56,11 +63,10 @@ Point Intersection(Segment a, Segment b, bool& exist)
 
 Point Intersection(Line k, Line l, bool& exist)
 {
+	exist = true;
 	Point p;
 	if (l.a != 0 && l.b != 0 && k.a == l.a*k.b / l.b)
 	{
-		p.x = 0;
-		p.y = 0;
 		cout << "Lines are parallels" << endl;
 		exist = false;
 		return p;
@@ -121,10 +127,7 @@ Point Intersection(Segment a, Line b, bool& exist)
 			else
 			{
 				// відрізок і пряма співпадають
-				p.x = 0;
-				p.y = 0;
 				exist = false;
-				// Line and segment match
 				return p;
 			}
 		}
@@ -133,8 +136,6 @@ Point Intersection(Segment a, Line b, bool& exist)
 	{
 		exist = false;
 		// No intersections
-		p.x = 0;
-		p.y = 0;
 		return p;
 	}
 
@@ -209,7 +210,7 @@ double radius(Rectangle r)
 	double b = abs(r.A.x - r.C.x);
 	if (a == b)
 	{
-		return sqrt(a*a + b*b);
+		return a / 2;
 	}
 	else {
 		cout << "Rectangle isn't isosceles" << endl;
@@ -226,7 +227,7 @@ double radius(Trapeze t)
 	d = sqrt(pow((t.GetTop().A.x - t.GetBottom().A.x), 2) + pow((t.GetTop().A.y - t.GetBottom().A.y), 2));
 	if (a + b == c + d)
 	{
-		return abs(t.GetTop().A.y - t.GetBottom().A.y);
+		return abs(t.GetTop().A.y - t.GetBottom().A.y)/2;
 	}
 	else
 	{
@@ -263,17 +264,17 @@ void Square(Rectangle r, Line l)
 	c.B = D;
 	d.A = A;
 	d.B = D;
-	bool e1 = false;
-	bool e2 = false;
-	bool e3 = false;
-	bool e4 = false;
+	bool e1;
+	bool e2;
+	bool e3;
+	bool e4;
 	Point i1 = Intersection(a, l, e1);
 	Point i2 = Intersection(b, l, e2);
 	Point i3 = Intersection(c, l, e3);
 	Point i4 = Intersection(d, l, e4);
 	// одна з площ
 	double area;
-	if (e1 || e2 || e3 || e4)
+	if (e1 == true || e2 == true || e3 == true || e4 ==true)
 	{
 		if (e1 && e2)
 		{
@@ -339,17 +340,17 @@ void Square(Trapeze r, Line l)
 	c.B = D;
 	d.A = A;
 	d.B = D;
-	bool e1 = false;
-	bool e2 = false;
-	bool e3 = false;
-	bool e4 = false;
+	bool e1;
+	bool e2;
+	bool e3;
+	bool e4;
 	Point i1 = Intersection(a, l, e1);
 	Point i2 = Intersection(b, l, e2);
 	Point i3 = Intersection(c, l, e3);
 	Point i4 = Intersection(d, l, e4);
 	// одна з площ
 	double area;
-	if (e1 || e2 || e3 || e4)
+	if (e1 == true || e2 == true || e3 == true || e4 == true)
 	{
 		if (e1 && e2)
 		{
@@ -387,9 +388,9 @@ void Square(Trapeze r, Line l)
 
 void Square(Triangle r, Line l)
 {
-	bool e1 = false;
-	bool e2 = false;
-	bool e3 = false;
+	bool e1;
+	bool e2;
+	bool e3;
 	Segment s1, s2, s3;
 	s1.A = r.A;
 	s1.B = r.B;
@@ -401,17 +402,24 @@ void Square(Triangle r, Line l)
 	Point i2 = Intersection(s2, l, e2);
 	Point i3 = Intersection(s3, l, e3);
 	double area = 0;
-	if (e1 && e2)
+	if (e1 == true || e2 == true || e3 == true) 
 	{
-		area = S(i1, i2, r.B);
+		if (e1 && e2)
+		{
+			area = S(i1, i2, r.B);
+		}
+		if (e1 && e3)
+		{
+			area = S(i1, i3, r.A);
+		}
+		if (e2 && e3)
+		{
+			area = S(i2, i3, r.C);
+		}
+		cout << S(r.A, r.B, r.C) - area << " and " << area << endl;
 	}
-	if (e1 && e3)
+	else
 	{
-		area = S(i1, i3, r.A);
+		cout << "No intersections" << endl;
 	}
-	if (e2 && e3)
-	{
-		area = S(i2, i3, r.C);
-	}
-	cout << S(r.A, r.B, r.C) - area << " and " << area << endl;
 }
